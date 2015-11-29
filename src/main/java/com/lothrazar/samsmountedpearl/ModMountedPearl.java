@@ -8,7 +8,6 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -18,16 +17,13 @@ public class ModMountedPearl
     public static final String MODID = "samsmountedpearl";
 	@Instance(value = MODID)
 	public static ModMountedPearl instance;
+	public static final String NBT_RIDING_ENTITY = "ride";
     @EventHandler
 	public void onPreInit(FMLPreInitializationEvent event)
 	{ 
   	    MinecraftForge.EVENT_BUS.register(instance); 
 	}
-    @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
-    }
-    
+
     @SubscribeEvent
 	public void onEnderTeleportEvent(EnderTeleportEvent event)
 	{  
@@ -40,11 +36,10 @@ public class ModMountedPearl
 				player.getEntityData().setInteger(NBT_RIDING_ENTITY, event.entityLiving.ridingEntity.getEntityId());
 				
 				event.entityLiving.ridingEntity.setPositionAndUpdate(event.targetX, event.targetY, event.targetZ);
-	 
 			}
 		}
 	}
-	public static final String NBT_RIDING_ENTITY = "ride";
+    
 	@SubscribeEvent
 	public void onEntityUpdate(LivingUpdateEvent event) 
 	{  
