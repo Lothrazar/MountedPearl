@@ -28,14 +28,14 @@ public class ModMountedPearl
 	public void onEnderTeleportEvent(EnderTeleportEvent event)
 	{  
 		if(event.entityLiving.worldObj.isRemote == false)//do not spawn a second 'ghost' one on client side
-		{
-			if(event.entityLiving.ridingEntity != null && event.entityLiving instanceof EntityPlayer)
+		{ 
+			if(event.entityLiving.getRidingEntity() != null && event.entityLiving instanceof EntityPlayer)
 			{
 				EntityPlayer player = (EntityPlayer)event.entityLiving;
 				 
-				player.getEntityData().setInteger(NBT_RIDING_ENTITY, event.entityLiving.ridingEntity.getEntityId());
+				player.getEntityData().setInteger(NBT_RIDING_ENTITY, event.entityLiving.getRidingEntity().getEntityId());
 				
-				event.entityLiving.ridingEntity.setPositionAndUpdate(event.targetX, event.targetY, event.targetZ);
+				event.entityLiving.getRidingEntity().setPositionAndUpdate(event.targetX, event.targetY, event.targetZ);
 			}
 		}
 	}
@@ -51,13 +51,13 @@ public class ModMountedPearl
 			
 			int setride = player.getEntityData().getInteger(NBT_RIDING_ENTITY);
 			
-			if(setride > 0 && event.entityLiving.ridingEntity == null)
+			if(setride > 0 && event.entityLiving.getRidingEntity() == null)
 			{ 
 				Entity horse = event.entityLiving.worldObj.getEntityByID(setride);
 				 
 				if(horse != null)
-				{
-					event.entityLiving.mountEntity(horse);
+				{ 
+					event.entityLiving.startRiding(horse,true);
 					player.getEntityData().setInteger(NBT_RIDING_ENTITY, -1);
 				}
 			}
