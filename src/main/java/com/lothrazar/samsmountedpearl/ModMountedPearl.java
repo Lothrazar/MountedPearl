@@ -48,7 +48,9 @@ public class ModMountedPearl
 		if(event.entityLiving instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer)event.entityLiving;
-			
+			if(player.getEntityData() == null){
+				return;
+			}
 			int setride = player.getEntityData().getInteger(NBT_RIDING_ENTITY);
 			
 			if(setride > 0 && event.entityLiving.getRidingEntity() == null)
