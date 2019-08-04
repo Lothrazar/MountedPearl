@@ -3,6 +3,7 @@ run/
 bin/
 build/
 eclipse/
+.idea
 logs/
 mods/
 config/
