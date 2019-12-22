@@ -1,4 +1,5 @@
 package com.lothrazar.samsmountedpearl;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,12 +29,11 @@ public class ModMountedPearl {
     if (living == null) {
       return;
     }
-    if (living.world.isRemote == false){// do not spawn a second 'ghost' one on client side
-
+    if (living.world.isRemote == false) {// do not spawn a second 'ghost' one on client side
       if (living.getRidingEntity() != null && living instanceof PlayerEntity) {
         PlayerEntity player = (PlayerEntity) living;
-
         player.getPersistentData().putInt(NBT_RIDING_ENTITY, player.getRidingEntity().getEntityId());
+        System.out.println("setpos after teleport " + player.getRidingEntity());
         player.getRidingEntity().setPositionAndUpdate(event.getTargetX(), event.getTargetY(), event.getTargetZ());
         event.setAttackDamage(0);
       }
