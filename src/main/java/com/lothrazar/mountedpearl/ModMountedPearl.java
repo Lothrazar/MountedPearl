@@ -9,7 +9,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid=ModMountedPearl.MODID)
+@Mod(modid=ModMountedPearl.MODID, acceptableRemoteVersions="*")
 public class ModMountedPearl {
 
   public static final String MODID = "mountedpearl";
