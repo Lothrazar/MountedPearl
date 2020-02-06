@@ -1,4 +1,4 @@
-package com.lothrazar.samsmountedpearl;
+package com.lothrazar.mountedpearl;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
