@@ -1,17 +1,10 @@
 {
-  "homepage": "http://www.curse.com/mc-mods/minecraft/232795-mounted-pearl-bring-your-mount-along-when-you",
+  "homepage": "https://www.curseforge.com/minecraft/mc-mods/mounted-pearl-bring-your-mount-along-when-you",
   "promos": {
-    "1.7.10-latest": "1.0.0",
-    "1.7.10-recommended": "1.0.0",
-    "1.8-latest": "1.0.0",
-    "1.8-recommended": "1.0.0",
-    "1.8.8-latest": "1.0.0",
-    "1.8.8-recommended": "1.0.0",
-    "1.8.9-latest": "1.0.0",
-    "1.9-recommended": "1.0.1",
-    "1.9-recommended": "1.0.1"
+    "1.6.2-latest": "1.0.0",
+    "1.6.2-recommended": "1.0.0"
   }
-  ,"1.9":{
-  	"1.0.1":"Fix crashes - adapt to breaking changes in Forge"
+  ,"1.6.2":{
+  	"1.0.0":"Ported"
   }
 }
