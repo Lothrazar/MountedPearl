@@ -19,11 +19,13 @@ public class ModMountedPearl {
 	public static final String MODID = "mountedpearl";
 	@Instance(value = MODID)
 	public static ModMountedPearl instance;
-	public static final String NBT_RIDING_ENTITY = "ride";
+	public static final String NBT_RIDING_ENTITY = MODID + "ride";
+	public static final String NBT_RIDING_TIMER = MODID + "ridetimer";
 
 	@EventHandler
 	public void onPreInit(FMLPreInitializationEvent event) {
 
+		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(instance);
 	}
 
@@ -31,54 +33,52 @@ public class ModMountedPearl {
 	public void onEnderTeleportEvent(EnderTeleportEvent event) {
 
 		Entity ent = event.getEntity();
-		if (ent instanceof EntityLiving == false) {
-			return;
-		}
-		EntityLivingBase living = (EntityLivingBase) event.getEntity();
-		if (living == null) {
-			return;
-		}
 
-		if (living.worldObj.isRemote == false)// do not spawn a second 'ghost' one on client side
-		{
-			if (living.getRidingEntity() != null && living instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) living;
+		if (ent instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) ent;
 
-				player.getEntityData().setInteger(NBT_RIDING_ENTITY, player.getRidingEntity().getEntityId());
-
-				player.getRidingEntity().setPositionAndUpdate(event.getTargetX(), event.getTargetY(),
-						event.getTargetZ());
+			if (player.getRidingEntity() == null) {
+				return;
 			}
+
+			player.getEntityData().setInteger(NBT_RIDING_ENTITY, player.getRidingEntity().getEntityId());
+			player.dismountRidingEntity();
+			player.getEntityData().setInteger(NBT_RIDING_TIMER, 3);
+			player.getEntityData().setDouble("mpx", event.getTargetX());
+			player.getEntityData().setDouble("mpy", event.getTargetY());
+			player.getEntityData().setDouble("mpz", event.getTargetZ());
+			event.setAttackDamage(0);
 		}
+
 	}
 
 	@SubscribeEvent
 	public void onEntityUpdate(LivingUpdateEvent event) {
 
-		Entity ent = event.getEntity();
-		if (ent instanceof EntityLiving == false) {
-			return;
-		}
-		EntityLivingBase living = (EntityLivingBase) event.getEntity();
-		if (living == null) {
-			return;
-		}
-
-		if (living instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) living;
+		if (event.getEntity() instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) event.getEntity();
 			if (player.getEntityData() == null) {
 				return;
 			}
 			int setride = player.getEntityData().getInteger(NBT_RIDING_ENTITY);
+			int timer = player.getEntityData().getInteger(NBT_RIDING_TIMER);
 
-			if (setride > 0 && player.getRidingEntity() == null) {
+			if (setride > 0) {// && player.getRidingEntity() == null
 				Entity horse = player.worldObj.getEntityByID(setride);
-
 				if (horse != null) {
+					if (timer > 0) {
+						player.getEntityData().setInteger(NBT_RIDING_TIMER, timer - 1);
+						double x = player.getEntityData().getDouble("mpx");
+						double y = player.getEntityData().getDouble("mpy");
+						double z = player.getEntityData().getDouble("mpz");
+						horse.setPositionAndUpdate(x, y, z);
+						return;
+					}
 					player.startRiding(horse, true);
 					player.getEntityData().setInteger(NBT_RIDING_ENTITY, -1);
 				}
 			}
 		}
+
 	}
 }
