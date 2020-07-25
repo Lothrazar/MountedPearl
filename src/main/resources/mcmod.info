@@ -1,12 +1,12 @@
 {
   "modListVersion": 2,
   "modList": [{
-    "modid": "samsmountedpearl",
+    "modid": "mountedpearl",
     "name": "Mounted Pearl",
     "description": "When you throw an ender pearl while mounted, you now bring your mount with you.",
     "version": "1.0.1",
-    "mcversion": "1.9",
-    "url": "http://www.curse.com/mc-mods/minecraft/232795-mounted-pearl-bring-your-mount-along-when-you",
+    "mcversion": "1.10.2",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/mounted-pearl-bring-your-mount-along-when-you",
     "updateUrl": "",
     "authorList": [ "Lothrazar" ],
     "credits": "The Forge and FML guys",

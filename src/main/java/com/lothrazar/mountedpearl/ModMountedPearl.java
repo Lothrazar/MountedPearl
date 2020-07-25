@@ -1,4 +1,4 @@
-package com.lothrazar.samsmountedpearl;
+package com.lothrazar.mountedpearl;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -13,67 +13,68 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = ModMountedPearl.MODID, useMetadata = true, updateJSON = "https://raw.githubusercontent.com/LothrazarMinecraftMods/MountedPearl/master/update.json")
-public class ModMountedPearl{
+@Mod(modid = ModMountedPearl.MODID, useMetadata = true, updateJSON = "https://raw.githubusercontent.com/Lothrazar/MountedPearl/trunk/1.10/update.json")
+public class ModMountedPearl {
 
-	public static final String MODID = "samsmountedpearl";
+	public static final String MODID = "mountedpearl";
 	@Instance(value = MODID)
 	public static ModMountedPearl instance;
 	public static final String NBT_RIDING_ENTITY = "ride";
 
 	@EventHandler
-	public void onPreInit(FMLPreInitializationEvent event){
+	public void onPreInit(FMLPreInitializationEvent event) {
 
 		MinecraftForge.EVENT_BUS.register(instance);
 	}
 
 	@SubscribeEvent
-	public void onEnderTeleportEvent(EnderTeleportEvent event){
+	public void onEnderTeleportEvent(EnderTeleportEvent event) {
 
 		Entity ent = event.getEntity();
-		if(ent instanceof EntityLiving == false){
+		if (ent instanceof EntityLiving == false) {
 			return;
 		}
 		EntityLivingBase living = (EntityLivingBase) event.getEntity();
-		if(living == null){
+		if (living == null) {
 			return;
 		}
 
-		if(living.worldObj.isRemote == false)// do not spawn a second 'ghost' one on client side
+		if (living.worldObj.isRemote == false)// do not spawn a second 'ghost' one on client side
 		{
-			if(living.getRidingEntity() != null && living instanceof EntityPlayer){
+			if (living.getRidingEntity() != null && living instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) living;
 
 				player.getEntityData().setInteger(NBT_RIDING_ENTITY, player.getRidingEntity().getEntityId());
 
-				player.getRidingEntity().setPositionAndUpdate(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+				player.getRidingEntity().setPositionAndUpdate(event.getTargetX(), event.getTargetY(),
+						event.getTargetZ());
 			}
 		}
 	}
 
 	@SubscribeEvent
-	public void onEntityUpdate(LivingUpdateEvent event){
+	public void onEntityUpdate(LivingUpdateEvent event) {
 
 		Entity ent = event.getEntity();
-		if(ent instanceof EntityLiving == false){
+		if (ent instanceof EntityLiving == false) {
 			return;
 		}
 		EntityLivingBase living = (EntityLivingBase) event.getEntity();
-		if(living == null){
+		if (living == null) {
 			return;
 		}
 
-		if(living instanceof EntityPlayer){
+		if (living instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) living;
-			if(player.getEntityData() == null){
+			if (player.getEntityData() == null) {
 				return;
 			}
 			int setride = player.getEntityData().getInteger(NBT_RIDING_ENTITY);
 
-			if(setride > 0 && player.getRidingEntity() == null){
+			if (setride > 0 && player.getRidingEntity() == null) {
 				Entity horse = player.worldObj.getEntityByID(setride);
 
-				if(horse != null){
+				if (horse != null) {
 					player.startRiding(horse, true);
 					player.getEntityData().setInteger(NBT_RIDING_ENTITY, -1);
 				}
