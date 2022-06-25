@@ -1,24 +1,11 @@
-buildscript {
-    repositories {
-	maven { url = 'https://maven.minecraftforge.net' } 
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-    }
+plugins {
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
 }
-apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'checkstyle'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+
 
 import net.minecraftforge.gradle.common.tasks.SignJar
-import groovy.json.JsonSlurper
-import groovy.json.JsonOutput
 
 version = "${mc_version}-${mod_version}"
 group = 'com.lothrazar.mountedpearl' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -26,16 +13,10 @@ archivesBaseName = 'mountedpearl'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-checkstyle {
-    toolVersion '8.23'
-    config project.resources.text.fromUri("https://raw.githubusercontent.com/Lothrazar/Cyclic/trunk/1.16/checkstyle.xml")
-}
-checkstyleMain {
-    source ='src/main/java'
-}
+
 
 minecraft {
- mappings channel: 'official', version: '1.18'
+	mappings channel: 'official', version: '1.19'
     //makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     // accessTransformer = file('build/resources/main/META-INF/accesstransformer.cfg')
@@ -83,7 +64,8 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-      minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+    
+	minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
       
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
@@ -152,14 +134,14 @@ task signJar(type: SignJar, dependsOn: jar) {
     outputFile = jar.archivePath
 }
 
-build.dependsOn signJar
+//build.dependsOn signJar
 
 task copyJar(type: Copy) {
     from jar
     into "${dist_folder}"
 }
 
-build.finalizedBy copyJar
+//build.finalizedBy copyJar
 
 task cleanJar {
   delete 'build/libs'
