@@ -5,7 +5,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -40,14 +40,13 @@ public class ModMountedPearl {
         player.getPersistentData().putDouble("mpx", event.getTargetX());
         player.getPersistentData().putDouble("mpy", event.getTargetY());
         player.getPersistentData().putDouble("mpz", event.getTargetZ());
-
         event.setAttackDamage(0);
       }
     }
   }
 
   @SubscribeEvent
-  public void onEntityUpdate(LivingUpdateEvent event) {
+  public void onEntityUpdate(LivingTickEvent event) {
     Entity ent = event.getEntity();
     if (ent instanceof LivingEntity == false) {
       return;
