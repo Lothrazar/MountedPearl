@@ -6,17 +6,17 @@ plugins {
 
 
 import net.minecraftforge.gradle.common.tasks.SignJar
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 version = "${mc_version}-${mod_version}"
 group = 'com.lothrazar.mountedpearl' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'mountedpearl'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 
 
 minecraft {
-	mappings channel: 'official', version: '1.19'
+    mappings channel: 'official', version: "${mc_version}"
     //makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     // accessTransformer = file('build/resources/main/META-INF/accesstransformer.cfg')
@@ -67,6 +67,11 @@ dependencies {
     
 	minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
       
+
+    implementation fg.deobf("blank:flib-${mc_version}:${flib_version}")
+	
+    
+	implementation fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
@@ -86,6 +91,33 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
 }
+
+repositories {
+  flatDir {
+      dir 'libs'
+  }
+  maven {
+    // location of the maven that hosts JEI files
+    name = "Progwml6 maven"
+    url = 'https://dvs1.progwml6.com/files/maven/'
+  }
+  maven {
+    name = "mappings"
+    url = 'https://dogforce-games.com/maven'
+  }
+  maven {
+    // location of a maven mirror for JEI files, as a fallback
+    name = "ModMaven"
+    url = 'https://modmaven.dev'
+  }
+  maven {
+  	name = "curios"
+    url = 'https://maven.theillusivec4.top/'
+  }
+  maven { url = 'https://maven.blamejared.com' }    
+  maven { url = 'https://www.cursemaven.com'  }
+}
+
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
@@ -120,6 +152,10 @@ publishing {
         }
     }
 }
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
 
 task signJar(type: SignJar, dependsOn: jar) {
 
@@ -134,14 +170,12 @@ task signJar(type: SignJar, dependsOn: jar) {
     outputFile = jar.archivePath
 }
 
-//build.dependsOn signJar
 
 task copyJar(type: Copy) {
     from jar
     into "${dist_folder}"
 }
 
-//build.finalizedBy copyJar
 
 task cleanJar {
   delete 'build/libs'

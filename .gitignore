@@ -1,34 +1,26 @@
+# eclipse
+bin
 *.launch
-bin/assets/
-run/
-bin/
-libs/
-build/
-eclipse/
-logs/
-mods/
-libs/
-out/
-saves/
-.gradle/
-.settings/
-src/generated
-.idea/
-server.properties 
-run/screenshots/
-.metadata/
-.settings/
+.settings
+.metadata
 .classpath
 .project
-options.txt
-usernamecache.json
-crash-reports/
-*.fdx
-*.fnm
-*.tis
+
+# idea
+out
+*.ipr
+*.iws
 *.iml
-.recommenders/
-.gitattributes
-*.lnk
-*.jks
-secret.properties
+.idea
+
+# gradle
+build
+.gradle
+
+# other
+run
+logs
+libs
+
+# Files from Forge MDK
+forge*changelog.txt
