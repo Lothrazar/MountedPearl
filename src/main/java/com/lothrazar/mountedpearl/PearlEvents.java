@@ -22,7 +22,7 @@ public class PearlEvents {
     if (living == null) {
       return;
     }
-    if (living.level.isClientSide == false) { // do not spawn a second 'ghost' one on client side
+    if (living.level().isClientSide == false) { // do not spawn a second 'ghost' one on client side
       if (living.getVehicle() != null && living instanceof Player) {
         Player player = (Player) living;
         player.getPersistentData().putInt(NBT_RIDING_ENTITY, player.getVehicle().getId());
@@ -55,7 +55,7 @@ public class PearlEvents {
       int setride = player.getPersistentData().getInt(NBT_RIDING_ENTITY);
       int timer = player.getPersistentData().getInt(NBT_RIDING_TIMER);
       if (setride > 0) {
-        Entity horse = player.level.getEntity(setride);
+        Entity horse = player.level().getEntity(setride);
         if (horse != null) {
           if (timer > 0) {
             player.getPersistentData().putInt(NBT_RIDING_TIMER, timer - 1);
