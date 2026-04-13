@@ -1,7 +1,7 @@
 package com.lothrazar.mountedpearl;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(ModMountedPearl.MODID)
 public class ModMountedPearl {
@@ -9,6 +9,6 @@ public class ModMountedPearl {
   public static final String MODID = "mountedpearl";
 
   public ModMountedPearl() {
-    MinecraftForge.EVENT_BUS.register(new PearlEvents());
+    NeoForge.EVENT_BUS.register(new PearlEvents());
   }
 }
