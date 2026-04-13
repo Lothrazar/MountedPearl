@@ -1,74 +1,74 @@
 package com.lothrazar.mountedpearl;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
+/**
+ * TODO we could do AttachmentTypes something like
+ * public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
+ *     DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, MODID);
+ *
+ * public static final Supplier<AttachmentType<RideData>> RIDE_DATA =
+ *     ATTACHMENT_TYPES.register("ride_data", () ->
+ *         AttachmentType.builder(() -> new RideData())
+ *             .serialize(RideData.CODEC)  // optional: only if you want it to save to disk
+ *             .build()
+ *     );
+ */
 public class PearlEvents {
 
-  public static final String NBT_RIDING_ENTITY = "ride";
-  public static final String NBT_RIDING_TIMER = "ridetimer";
+  // now namespaced in 1.21+
+  public static final String NBT_VEHICLE_ENTITY = ModMountedPearl.MODID + ":ride";
+  // i think zero could be a valid id
+  public static final int EMPTY = -1;
 
+  // Sync the player's current mount every tick so we can read it in the pearl event
   @SubscribeEvent
-  public void onEnderTeleportEvent(EntityTeleportEvent.EnderPearl event) {
-    Entity ent = event.getEntity();
-    if (ent instanceof LivingEntity == false) {
+  public void onEntityUpdate(EntityTickEvent.Post event) {
+    if (!(event.getEntity() instanceof Player player)) {
       return;
     }
-    LivingEntity living = (LivingEntity) event.getEntity();
-    if (living.level().isClientSide == false) { // do not spawn a second 'ghost' one on client side
-      if (living.getVehicle() != null && living instanceof Player) {
-        Player player = (Player) living;
-        player.getPersistentData().putInt(NBT_RIDING_ENTITY, player.getVehicle().getId());
-        player.stopRiding();
-        player.getPersistentData().putInt(NBT_RIDING_TIMER, 3);
-        //                player.getRidingEntity().setPositionAndUpdate(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-        player.getPersistentData().putDouble("mpx", event.getTargetX());
-        player.getPersistentData().putDouble("mpy", event.getTargetY());
-        player.getPersistentData().putDouble("mpz", event.getTargetZ());
-        event.setAttackDamage(0);
-      }
+    if (player.level().isClientSide) {
+      return;
+    }
+    Entity vehicle = player.getVehicle();
+    if (vehicle != null) {
+      player.getPersistentData().putInt(NBT_VEHICLE_ENTITY, vehicle.getId());
+    } else {
+      player.getPersistentData().putInt(NBT_VEHICLE_ENTITY, EMPTY);
     }
   }
 
- //Since   old LivingTickEvent was equivalent to post-tick, EntityTickEvent.Post
+  // By the time this fires, the player has already teleported
+  //its now a post event. in 1.20 and previous this fired pre, so vehicle was nonnull
+  // look up the saved vehicle,
+  // teleport it to the player's destination, and re-startRiding
   @SubscribeEvent
-  public void onEntityUpdate(EntityTickEvent.Post event) {
-
-    if (event.getEntity() instanceof Player player) {
-//      Player player = (Player) living;
-      player.getPersistentData();
-      int setride = player.getPersistentData().getInt(NBT_RIDING_ENTITY);
-      int timer = player.getPersistentData().getInt(NBT_RIDING_TIMER);
-      if (setride > 0) {
-        Entity horse = player.level().getEntity(setride);
-        if (horse != null) {
-          if (timer > 0) {
-            player.getPersistentData().putInt(NBT_RIDING_TIMER, timer - 1);
-            double x = player.getPersistentData().getDouble("mpx");
-            double y = player.getPersistentData().getDouble("mpy");
-            double z = player.getPersistentData().getDouble("mpz");
-            horse.teleportTo(x, y, z);
-            return;
-          }
-          player.startRiding(horse, true);
-          player.getPersistentData().putInt(NBT_RIDING_ENTITY, -1);
-        } else {
-          // horse despawned or unloaded during countdown, clear stale data
-          player.getPersistentData().putInt(NBT_RIDING_ENTITY, -1);
-        }
+  public void onEnderTeleportEvent(EntityTeleportEvent.EnderPearl event) {
+    if (!(event.getEntity() instanceof Player player)) {
+      return;
+    }
+    if (player.level().isClientSide) {
+      // do not spawn a second 'ghost' one on client side
+      return;
+    }
+    int savedId = player.getPersistentData().getInt(NBT_VEHICLE_ENTITY);
+    if (savedId > 0) {
+      Entity horse = player.level().getEntity(savedId);
+      if (horse != null) {
+        horse.teleportTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+        // TODO: we need a delay between these two things
+        player.startRiding(horse, true);
       }
     }
   }
 
   @SubscribeEvent
   public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-    Player player = event.getEntity();
-    player.getPersistentData().putInt(NBT_RIDING_ENTITY, -1);
-    player.getPersistentData().putInt(NBT_RIDING_TIMER, 0);
+    event.getEntity().getPersistentData().putInt(NBT_VEHICLE_ENTITY, EMPTY);
   }
 }
