@@ -39,7 +39,7 @@ public class PearlEvents {
     if (!(event.getEntity() instanceof Player player)) {
       return;
     }
-    if (player.level().isClientSide) {
+    if (player.level().isClientSide()) {
       return;
     }
     // horse.teleportTo() from the pearl event done
@@ -50,18 +50,18 @@ public class PearlEvents {
 
   // sauce!
   private static void asyncVehicleRiding(Player player) {
-    int pendingId = player.getPersistentData().getInt(NBT_PENDING_MOUNT);
+    int pendingId = player.getPersistentData().getIntOr(NBT_PENDING_MOUNT, EMPTY);
     if (pendingId <= EMPTY) {
       return;
     }
-    int timer = player.getPersistentData().getInt(NBT_PENDING_TIMER);
+    int timer = player.getPersistentData().getIntOr(NBT_PENDING_TIMER, 0);
     if (timer > 0) {
       player.getPersistentData().putInt(NBT_PENDING_TIMER, timer - 1);
       return;
     }
     Entity horse = player.level().getEntity(pendingId);
     if (horse != null) {
-      player.startRiding(horse, true);
+      player.startRiding(horse, true, true);
     }
     player.getPersistentData().putInt(NBT_PENDING_MOUNT, EMPTY);
   }
@@ -84,11 +84,11 @@ public class PearlEvents {
     if (!(event.getEntity() instanceof Player player)) {
       return;
     }
-    if (player.level().isClientSide) {
+    if (player.level().isClientSide()) {
       // do not spawn a second 'ghost' one on client side
       return;
     }
-    int savedId = player.getPersistentData().getInt(NBT_VEHICLE_ENTITY);
+    int savedId = player.getPersistentData().getIntOr(NBT_VEHICLE_ENTITY, EMPTY);
     if (savedId > EMPTY) {
       Entity horse = player.level().getEntity(savedId);
       if (horse != null) {
